@@ -3,65 +3,87 @@
 <head>
 <meta charset="UTF-8">
 <title>Recovery Planner</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-body { font-family: sans-serif; max-width: 900px; margin: 40px auto; }
-h2 { margin-top: 32px; }
-form { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
-input, select { padding: 6px; }
-.event { padding: 10px; border-left: 4px solid #4caf50; background: #f9f9f9; margin-bottom: 8px; }
+body { font-family: 'Roboto', sans-serif; max-width: 900px; margin: 40px auto; background: #f5f7f8; color: #333; }
+h1 { text-align: center; }
+button.tabBtn { padding: 8px 16px; border-radius: 6px; border: none; cursor: pointer; background: #eee; transition: background 0.2s; }
+button.tabBtn.active { background: #4caf50; color: #fff; }
+button.tabBtn:hover { background: #ddd; }
+form { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; background: #fff; padding: 12px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+input, select, button { padding: 8px; border-radius: 4px; border: 1px solid #ccc; }
+button.submitBtn { background: #4caf50; color: white; cursor: pointer; border: none; transition: background 0.2s; }
+button.submitBtn:hover { background: #43a047; }
+.event { padding: 10px; border-left: 4px solid #4caf50; background: #fff; margin-bottom: 8px; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; }
 .AA { border-color: #1976d2; }
 .Personal { border-color: #4caf50; }
 .Reminder { border-color: #ff9800; }
-.links a { display: block; margin-bottom: 6px; }
+#todayDashboard { padding:16px; background:#e6f4ea; border-radius:12px; margin-bottom:24px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+.links a { display: inline-block; margin-bottom: 6px; color:#1976d2; text-decoration:none; }
+.links a:hover { text-decoration: underline; }
 .sober { font-size: 1.4em; font-weight: bold; margin-bottom: 16px; }
+.deleteBtn { background: #e53935; margin-left: 8px; }
+.deleteBtn:hover { background: #d32f2f; }
 </style>
 </head>
 <body>
 <h1>🌱 Recovery Planner</h1>
 
-<!-- Today Dashboard -->
-<div id="todayDashboard" style="padding:16px; background:#eef6ee; border-radius:8px; margin-bottom:24px;">
-  <h2>Today</h2>
-  <div id="todayDate"></div>
-  <div id="todaySober">✨ Loading...</div>
-  <h3>Today's Events</h3>
-  <div id="todayEvents">Loading...</div>
+<!-- Navigation Tabs -->
+<div id="nav" style="display:flex; gap:16px; margin-bottom:24px; justify-content:center;">
+  <button class="tabBtn active" onclick="showTab('today')">Today</button>
+  <button class="tabBtn" onclick="showTab('schedule')">Schedule</button>
 </div>
 
-<div class="sober" id="soberCounter">✨ Loading...</div>
+<!-- Today Tab -->
+<div id="todayTab">
+  <div id="todayDashboard">
+    <h2>Today</h2>
+    <div id="todayDate"></div>
+    <div id="todaySober">✨ Loading...</div>
+    <h3>Today's Events</h3>
+    <div id="todayEvents">Loading...</div>
+  </div>
+</div>
 
-<form id="sobrietyForm">
-<label>Sobriety start date:</label>
-<input type="date" id="sobrietyStart" />
-<button>Save</button>
-</form>
+<!-- Schedule Tab -->
+<div id="scheduleTab" style="display:none;">
+  <div class="sober" id="soberCounter">✨ Loading...</div>
 
-<h2>Add Event / Meeting</h2>
-<form id="eventForm">
-<input placeholder="Title" id="title" required />
-<select id="category">
-<option>Personal</option>
-<option>AA</option>
-<option>Reminder</option>
-</select>
-<input type="datetime-local" id="start" required />
-<input type="datetime-local" id="end" required />
-<input placeholder="Optional link" id="link" />
-<select id="recurrence">
-<option>None</option>
-<option>Daily</option>
-<option>Weekly</option>
-</select>
-<button>Add</button>
-</form>
+  <form id="sobrietyForm">
+    <label>Sobriety start date:</label>
+    <input type="date" id="sobrietyStart" />
+    <button class="submitBtn">Save</button>
+  </form>
 
-<h2>Your Schedule</h2>
-<div id="events"></div>
+  <h2>Add Event / Meeting</h2>
+  <form id="eventForm">
+    <input placeholder="Title" id="title" required />
+    <select id="category">
+      <option>Personal</option>
+      <option>AA</option>
+      <option>Reminder</option>
+    </select>
+    <input type="datetime-local" id="start" required />
+    <input type="datetime-local" id="end" required />
+    <input placeholder="Optional link" id="link" />
+    <select id="recurrence">
+      <option>None</option>
+      <option>Daily</option>
+      <option>Weekly</option>
+    </select>
+    <button class="submitBtn">Add</button>
+  </form>
+
+  <h2>Your Schedule</h2>
+  <div id="events"></div>
+</div>
 
 <h2>Helpful Links</h2>
 <div class="links">
-<a href="https://www.alcoholics-anonymous.org.uk/" target="_blank">Alcoholics Anonymous</a>
-<a href="https://www.alcoholics-anonymous.org.uk/find-a-meeting/" target="_blank">Online AA Meetings</a>
+  <a href="https://www.aa.org" target="_blank">Alcoholics Anonymous</a>
+  <a href="https://aa-intergroup.org" target="_blank">Online AA Meetings</a>
+  <a href="https://www.samhsa.gov/find-help/national-helpline" target="_blank">SAMHSA Helpline</a>
 </div>
 
 <script>
@@ -108,8 +130,6 @@ async function loadEvents(todayOnly=false) {
   }
   const events = await res.json();
 
-  
-
   eventsDiv.innerHTML = '';
   todayEventsDiv.innerHTML = '';
 
@@ -119,29 +139,27 @@ async function loadEvents(todayOnly=false) {
     const startDate = new Date(e.start);
     const endDate = new Date(e.end);
 
-    // main schedule
+    // Main schedule
     const eventEl = document.createElement('div');
     eventEl.className = `event ${e.category}`;
-    eventEl.innerHTML = `<strong>${e.title}</strong> <br> ${startDate.toLocaleString()} - ${endDate.toLocaleString()} ${e.link ? `<br><a href='${e.link}' target='_blank'>Link</a>` : ''}`;
+    eventEl.innerHTML = `<div><strong>${e.title}</strong><br>${startDate.toLocaleString()} - ${endDate.toLocaleString()}${e.link ? `<br><a href='${e.link}' target='_blank'>Link</a>` : ''}</div>`;
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.textContent = 'Delete';
+    deleteBtn.className = 'deleteBtn';
+    deleteBtn.onclick = async () => {
+      await fetch(`/api/events/${e.id}`, { method: 'DELETE' });
+      loadEvents(true);
+    };
+    eventEl.appendChild(deleteBtn);
+
     eventsDiv.appendChild(eventEl);
-
-    // Add delete button
-const deleteBtn = document.createElement('button');
-deleteBtn.textContent = 'Delete';
-deleteBtn.style.marginLeft = '8px';
-deleteBtn.onclick = async () => {
-    await fetch(`/api/events/${e.id}`, { method: 'DELETE' });
-    loadEvents(true); // reload events including Today Dashboard
-};
-eventEl.appendChild(deleteBtn);
-
-eventsDiv.appendChild(eventEl);
 
     // Today Dashboard
     if (todayOnly && startDate.toDateString() === todayStr) {
       const todayEl = document.createElement('div');
       todayEl.className = `event ${e.category}`;
-      todayEl.innerHTML = `<strong>${e.title}</strong> ${startDate.toLocaleTimeString()} - ${endDate.toLocaleTimeString()} ${e.link ? `<br><a href='${e.link}' target='_blank'>Link</a>` : ''}`;
+      todayEl.innerHTML = `<strong>${e.title}</strong> ${startDate.toLocaleTimeString()} - ${endDate.toLocaleTimeString()}${e.link ? `<br><a href='${e.link}' target='_blank'>Link</a>` : ''}`;
       todayEventsDiv.appendChild(todayEl);
     }
   });
@@ -149,6 +167,13 @@ eventsDiv.appendChild(eventEl);
   if (todayOnly && todayEventsDiv.innerHTML === '') {
     todayEventsDiv.textContent = 'No events today.';
   }
+}
+
+function showTab(tab) {
+  document.getElementById('todayTab').style.display = tab === 'today' ? 'block' : 'none';
+  document.getElementById('scheduleTab').style.display = tab === 'schedule' ? 'block' : 'none';
+  document.querySelectorAll('.tabBtn').forEach(btn => btn.classList.remove('active'));
+  document.querySelector(`button[onclick*='${tab}']`).classList.add('active');
 }
 
 window.addEventListener('DOMContentLoaded', () => {
