@@ -19,6 +19,15 @@ input, select { padding: 6px; }
 <body>
 <h1>🌱 Recovery Planner</h1>
 
+<!-- Today Dashboard -->
+<div id="todayDashboard" style="padding:16px; background:#eef6ee; border-radius:8px; margin-bottom:24px;">
+  <h2>Today</h2>
+  <div id="todayDate"></div>
+  <div id="todaySober">✨ Loading...</div>
+  <h3>Today's Events</h3>
+  <div id="todayEvents">Loading...</div>
+</div>
+
 <div class="sober" id="soberCounter">✨ Loading...</div>
 
 <form id="sobrietyForm">
@@ -51,90 +60,108 @@ input, select { padding: 6px; }
 
 <h2>Helpful Links</h2>
 <div class="links">
-<a href="https://www.aa.org" target="_blank">Alcoholics Anonymous</a>
-<a href="https://aa-intergroup.org" target="_blank">Online AA Meetings</a>
-<a href="https://www.samhsa.gov/find-help/national-helpline" target="_blank">SAMHSA Helpline</a>
+<a href="https://www.alcoholics-anonymous.org.uk/" target="_blank">Alcoholics Anonymous</a>
+<a href="https://www.alcoholics-anonymous.org.uk/find-a-meeting/" target="_blank">Online AA Meetings</a>
 </div>
 
 <script>
-window.addEventListener('DOMContentLoaded', () => {
-  const title = document.getElementById('title');
-  const category = document.getElementById('category');
-  const start = document.getElementById('start');
-  const end = document.getElementById('end');
-  const link = document.getElementById('link');
-  const recurrence = document.getElementById('recurrence');
-  const sobrietyStart = document.getElementById('sobrietyStart');
-  const eventForm = document.getElementById('eventForm');
-  const sobrietyForm = document.getElementById('sobrietyForm');
-  const soberCounter = document.getElementById('soberCounter');
-  const eventsDiv = document.getElementById('events');
+const title = document.getElementById('title');
+const category = document.getElementById('category');
+const start = document.getElementById('start');
+const end = document.getElementById('end');
+const link = document.getElementById('link');
+const recurrence = document.getElementById('recurrence');
+const sobrietyStart = document.getElementById('sobrietyStart');
+const eventForm = document.getElementById('eventForm');
+const sobrietyForm = document.getElementById('sobrietyForm');
+const soberCounter = document.getElementById('soberCounter');
+const eventsDiv = document.getElementById('events');
 
-  function daysBetween(start) {
-    const s = new Date(start);
-    const now = new Date();
-    return Math.floor((now - s) / (1000*60*60*24));
+const todayDate = document.getElementById('todayDate');
+const todaySober = document.getElementById('todaySober');
+const todayEventsDiv = document.getElementById('todayEvents');
+
+function daysBetween(start) {
+  const s = new Date(start);
+  const now = new Date();
+  return Math.floor((now - s) / (1000*60*60*24));
+}
+
+async function loadSobriety() {
+  const res = await fetch('/api/sobriety');
+  if (!res.ok) return null;
+  const data = await res.json();
+  if (data.start_date) {
+    const days = daysBetween(data.start_date);
+    soberCounter.textContent = `✨ ${days} days sober`;
+    todaySober.textContent = `✨ ${days} days sober`;
+    return days;
   }
+  return null;
+}
 
-  async function loadSobriety() {
-    const res = await fetch('/api/sobriety');
-    const data = await res.json();
-    if (data.start_date) {
-      soberCounter.textContent = `✨ ${daysBetween(data.start_date)} days sober`;
-    } else {
-      soberCounter.textContent = '✨ Set your sobriety start date';
+async function loadEvents(todayOnly=false) {
+  const res = await fetch('/api/events');
+  if (!res.ok) {
+    todayEventsDiv.textContent = 'Failed to load events.';
+    return;
+  }
+  const events = await res.json();
+
+  
+
+  eventsDiv.innerHTML = '';
+  todayEventsDiv.innerHTML = '';
+
+  const todayStr = new Date().toDateString();
+
+  events.forEach(e => {
+    const startDate = new Date(e.start);
+    const endDate = new Date(e.end);
+
+    // main schedule
+    const eventEl = document.createElement('div');
+    eventEl.className = `event ${e.category}`;
+    eventEl.innerHTML = `<strong>${e.title}</strong> <br> ${startDate.toLocaleString()} - ${endDate.toLocaleString()} ${e.link ? `<br><a href='${e.link}' target='_blank'>Link</a>` : ''}`;
+    eventsDiv.appendChild(eventEl);
+
+    // Add delete button
+const deleteBtn = document.createElement('button');
+deleteBtn.textContent = 'Delete';
+deleteBtn.style.marginLeft = '8px';
+deleteBtn.onclick = async () => {
+    await fetch(`/api/events/${e.id}`, { method: 'DELETE' });
+    loadEvents(true); // reload events including Today Dashboard
+};
+eventEl.appendChild(deleteBtn);
+
+eventsDiv.appendChild(eventEl);
+
+    // Today Dashboard
+    if (todayOnly && startDate.toDateString() === todayStr) {
+      const todayEl = document.createElement('div');
+      todayEl.className = `event ${e.category}`;
+      todayEl.innerHTML = `<strong>${e.title}</strong> ${startDate.toLocaleTimeString()} - ${endDate.toLocaleTimeString()} ${e.link ? `<br><a href='${e.link}' target='_blank'>Link</a>` : ''}`;
+      todayEventsDiv.appendChild(todayEl);
     }
+  });
+
+  if (todayOnly && todayEventsDiv.innerHTML === '') {
+    todayEventsDiv.textContent = 'No events today.';
   }
+}
 
-  window.deleteEvent = async id => {
-    await fetch('/api/events/' + id, { method: 'DELETE' });
-    loadEvents();
-  };
-
-  async function loadEvents() {
-    const res = await fetch('/api/events');
-    const events = await res.json();
-    eventsDiv.innerHTML = '';
-
-    const today = new Date();
-
-    events.forEach(e => {
-      const occurrences = [new Date(e.start)];
-
-      if (e.recurrence === 'Daily') {
-        let next = new Date(e.start);
-        while (next <= today) { occurrences.push(new Date(next)); next.setDate(next.getDate() + 1); }
-      } else if (e.recurrence === 'Weekly') {
-        let next = new Date(e.start);
-        while (next <= today) { occurrences.push(new Date(next)); next.setDate(next.getDate() + 7); }
-      }
-
-      occurrences.forEach(date => {
-        const div = document.createElement('div');
-        div.className = `event ${e.category}`;
-        const formattedStart = new Date(date).toISOString().slice(0,16).replace('T',' ');
-        const formattedEnd = e.end.slice(0,16).replace('T',' ');
-
-        let html = '<b>' + e.title + '</b> (' + e.category + ')<br>' +
-                   formattedStart + ' → ' + formattedEnd +
-                   (e.recurrence !== 'None' ? ' (' + e.recurrence + ')' : '') + '<br>';
-
-        if (e.link) html += '<a href="' + e.link + '" target="_blank">Open link</a><br>';
-
-        html += '<button onclick="deleteEvent(' + e.id + ')">Delete</button>';
-
-        div.innerHTML = html;
-        eventsDiv.appendChild(div);
-      });
-    });
-  }
+window.addEventListener('DOMContentLoaded', () => {
+  todayDate.textContent = new Date().toDateString();
+  loadSobriety();
+  loadEvents(true);
 
   sobrietyForm.onsubmit = async e => {
     e.preventDefault();
     await fetch('/api/sobriety', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ start_date: sobrietyStart.value })
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({start_date: sobrietyStart.value})
     });
     loadSobriety();
   };
@@ -142,8 +169,8 @@ window.addEventListener('DOMContentLoaded', () => {
   eventForm.onsubmit = async e => {
     e.preventDefault();
     await fetch('/api/events', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
       body: JSON.stringify({
         title: title.value,
         category: category.value,
@@ -153,12 +180,9 @@ window.addEventListener('DOMContentLoaded', () => {
         recurrence: recurrence.value
       })
     });
-    e.target.reset();
-    loadEvents();
+    loadEvents(true);
+    eventForm.reset();
   };
-
-  loadSobriety();
-  loadEvents();
 });
 </script>
 </body>
