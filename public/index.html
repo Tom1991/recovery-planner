@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Recovery Planner</title>
+<style>
+body { font-family: sans-serif; max-width: 900px; margin: 40px auto; }
+h2 { margin-top: 32px; }
+form { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+input, select { padding: 6px; }
+.event { padding: 10px; border-left: 4px solid #4caf50; background: #f9f9f9; margin-bottom: 8px; }
+.AA { border-color: #1976d2; }
+.Personal { border-color: #4caf50; }
+.Reminder { border-color: #ff9800; }
+.links a { display: block; margin-bottom: 6px; }
+.sober { font-size: 1.4em; font-weight: bold; margin-bottom: 16px; }
+</style>
+</head>
+<body>
+<h1>🌱 Recovery Planner</h1>
+
+<div class="sober" id="soberCounter">✨ Loading...</div>
+
+<form id="sobrietyForm">
+<label>Sobriety start date:</label>
+<input type="date" id="sobrietyStart" />
+<button>Save</button>
+</form>
+
+<h2>Add Event / Meeting</h2>
+<form id="eventForm">
+<input placeholder="Title" id="title" required />
+<select id="category">
+<option>Personal</option>
+<option>AA</option>
+<option>Reminder</option>
+</select>
+<input type="datetime-local" id="start" required />
+<input type="datetime-local" id="end" required />
+<input placeholder="Optional link" id="link" />
+<select id="recurrence">
+<option>None</option>
+<option>Daily</option>
+<option>Weekly</option>
+</select>
+<button>Add</button>
+</form>
+
+<h2>Your Schedule</h2>
+<div id="events"></div>
+
+<h2>Helpful Links</h2>
+<div class="links">
+<a href="https://www.aa.org" target="_blank">Alcoholics Anonymous</a>
+<a href="https://aa-intergroup.org" target="_blank">Online AA Meetings</a>
+<a href="https://www.samhsa.gov/find-help/national-helpline" target="_blank">SAMHSA Helpline</a>
+</div>
+
+<script>
+window.addEventListener('DOMContentLoaded', () => {
+  const title = document.getElementById('title');
+  const category = document.getElementById('category');
+  const start = document.getElementById('start');
+  const end = document.getElementById('end');
+  const link = document.getElementById('link');
+  const recurrence = document.getElementById('recurrence');
+  const sobrietyStart = document.getElementById('sobrietyStart');
+  const eventForm = document.getElementById('eventForm');
+  const sobrietyForm = document.getElementById('sobrietyForm');
+  const soberCounter = document.getElementById('soberCounter');
+  const eventsDiv = document.getElementById('events');
+
+  function daysBetween(start) {
+    const s = new Date(start);
+    const now = new Date();
+    return Math.floor((now - s) / (1000*60*60*24));
+  }
+
+  async function loadSobriety() {
+    const res = await fetch('/api/sobriety');
+    const data = await res.json();
+    if (data.start_date) {
+      soberCounter.textContent = `✨ ${daysBetween(data.start_date)} days sober`;
+    } else {
+      soberCounter.textContent = '✨ Set your sobriety start date';
+    }
+  }
+
+  window.deleteEvent = async id => {
+    await fetch('/api/events/' + id, { method: 'DELETE' });
+    loadEvents();
+  };
+
+  async function loadEvents() {
+    const res = await fetch('/api/events');
+    const events = await res.json();
+    eventsDiv.innerHTML = '';
+
+    const today = new Date();
+
+    events.forEach(e => {
+      const occurrences = [new Date(e.start)];
+
+      if (e.recurrence === 'Daily') {
+        let next = new Date(e.start);
+        while (next <= today) { occurrences.push(new Date(next)); next.setDate(next.getDate() + 1); }
+      } else if (e.recurrence === 'Weekly') {
+        let next = new Date(e.start);
+        while (next <= today) { occurrences.push(new Date(next)); next.setDate(next.getDate() + 7); }
+      }
+
+      occurrences.forEach(date => {
+        const div = document.createElement('div');
+        div.className = `event ${e.category}`;
+        const formattedStart = new Date(date).toISOString().slice(0,16).replace('T',' ');
+        const formattedEnd = e.end.slice(0,16).replace('T',' ');
+
+        let html = '<b>' + e.title + '</b> (' + e.category + ')<br>' +
+                   formattedStart + ' → ' + formattedEnd +
+                   (e.recurrence !== 'None' ? ' (' + e.recurrence + ')' : '') + '<br>';
+
+        if (e.link) html += '<a href="' + e.link + '" target="_blank">Open link</a><br>';
+
+        html += '<button onclick="deleteEvent(' + e.id + ')">Delete</button>';
+
+        div.innerHTML = html;
+        eventsDiv.appendChild(div);
+      });
+    });
+  }
+
+  sobrietyForm.onsubmit = async e => {
+    e.preventDefault();
+    await fetch('/api/sobriety', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ start_date: sobrietyStart.value })
+    });
+    loadSobriety();
+  };
+
+  eventForm.onsubmit = async e => {
+    e.preventDefault();
+    await fetch('/api/events', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        title: title.value,
+        category: category.value,
+        start: start.value,
+        end: end.value,
+        link: link.value,
+        recurrence: recurrence.value
+      })
+    });
+    e.target.reset();
+    loadEvents();
+  };
+
+  loadSobriety();
+  loadEvents();
+});
+</script>
+</body>
+</html>
