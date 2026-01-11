@@ -10,9 +10,8 @@ h1 { text-align: center; }
 button.tabBtn { padding: 8px 16px; border-radius: 6px; border: none; cursor: pointer; background: #eee; transition: background 0.2s; }
 button.tabBtn.active { background: #4caf50; color: #fff; }
 button.tabBtn:hover { background: #ddd; }
-form { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; background: #fff; padding: 12px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
-input, select, button, textarea { padding: 8px; border-radius: 4px; border: 1px solid #ccc; }
-textarea { width: 100%; min-height: 60px; resize: vertical; }
+form { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+input, select, button, textarea { padding: 8px; border-radius: 4px; border: 1px solid #ccc; font-family: 'Roboto', sans-serif; }
 button.submitBtn { background: #4caf50; color: white; cursor: pointer; border: none; transition: background 0.2s; }
 button.submitBtn:hover { background: #43a047; }
 
@@ -26,14 +25,26 @@ button.submitBtn:hover { background: #43a047; }
 .Reminder { border-color: #ff9800; }
 
 #todayDashboard { padding:16px; background:#e6f4ea; border-radius:12px; margin-bottom:24px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+
 .links a { display: inline-block; margin-bottom: 6px; color:#1976d2; text-decoration:none; }
 .links a:hover { text-decoration: underline; }
+
 .sober { font-size: 1.4em; font-weight: bold; margin-bottom: 16px; }
+
 .deleteBtn { background: #e53935; margin-left: 8px; padding: 4px 8px; border:none; border-radius:4px; color:white; cursor:pointer; }
 .deleteBtn:hover { background: #d32f2f; }
 
-#diaryForm label { width: 100%; margin-top: 8px; font-weight: bold; }
-#diaryForm input[type="text"], #diaryForm textarea, #diaryForm input[type="number"] { width: 100%; }
+textarea { width: 100%; resize: vertical; }
+
+.diary-container { background:#fff; padding:16px; border-radius:12px; box-shadow:0 2px 6px rgba(0,0,0,0.1); margin-bottom:24px; }
+.diary-section { margin-bottom:16px; }
+.diary-section h4 { margin-bottom:6px; font-weight:500; }
+#riskPrompt { color:#d32f2f; font-weight:bold; margin-bottom:12px; }
+
+.pagination { display:flex; gap:8px; margin-bottom:16px; align-items:center; }
+.pagination button { padding:6px 12px; border:none; border-radius:4px; background:#1976d2; color:white; cursor:pointer; }
+.pagination button:hover { background:#1565c0; }
+.pagination input { padding:6px 12px; border-radius:4px; border:1px solid #ccc; }
 </style>
 </head>
 <body>
@@ -99,12 +110,13 @@ button.submitBtn:hover { background: #43a047; }
 </div>
 
 <!-- Risk Cycle Tab -->
-<div id="riskTab" style="display:none;" class="card">
+<div id="riskTab" style="display:none;">
   <h2>🧠 2–3 Week Cycle Prevention & Honesty Plan</h2>
   <p><strong>Purpose:</strong> Interrupt my predictable 2–3 week risk cycle by prioritising early connection, low‑detail honesty, and nervous‑system regulation.</p>
 
   <h3>1. Name the Pattern</h3>
-  <p><strong>Cycle name:</strong> The Danger Zone<br><strong>Typical timing:</strong> Around weeks 2–3 after a stable period.</p>
+  <p><strong>Cycle name:</strong> The Danger Zone<br>
+  <strong>Typical timing:</strong> Around weeks 2–3 after a stable period.</p>
   <hr>
 
   <h3>2. Early Warning Signs</h3>
@@ -166,35 +178,54 @@ button.submitBtn:hover { background: #43a047; }
 
 <!-- Diary Tab -->
 <div id="diaryTab" style="display:none;">
-  <h2>📝 Today's Diary</h2>
-  <form id="diaryForm">
-    <label>Goal for the day:</label>
-    <input type="text" id="diaryGoal" placeholder="My goal for today" />
+  <h2>Daily Diary</h2>
 
-    <label>3 Things I am grateful for today:</label>
-    <input type="text" id="grateful1" placeholder="1" />
-    <input type="text" id="grateful2" placeholder="2" />
-    <input type="text" id="grateful3" placeholder="3" />
+  <div class="pagination">
+    <button id="prevDay">&laquo; Previous</button>
+    <input type="date" id="diaryDate">
+    <button id="nextDay">Next &raquo;</button>
+  </div>
 
-    <label>3 Emotions:</label>
-    <input type="text" id="emotion1" placeholder="1" />
-    <input type="text" id="emotion2" placeholder="2" />
-    <input type="text" id="emotion3" placeholder="3" />
+  <div id="riskPrompt"></div>
 
-    <label>Cravings (0-10):</label>
-    <input type="number" id="cravings" min="0" max="10" />
+  <div class="diary-container">
+    <div class="diary-section">
+      <h4>Goal for the day</h4>
+      <input type="text" id="goal">
+    </div>
 
-    <label>Morning:</label>
-    <textarea id="morning" placeholder="Morning notes..."></textarea>
+    <div class="diary-section">
+      <h4>3 Things I am grateful for today</h4>
+      <textarea id="gratitude" rows="2"></textarea>
+    </div>
 
-    <label>Afternoon:</label>
-    <textarea id="afternoon" placeholder="Afternoon notes..."></textarea>
+    <div class="diary-section">
+      <h4>3 Emotions</h4>
+      <textarea id="emotions" rows="2"></textarea>
+    </div>
 
-    <label>Evening:</label>
-    <textarea id="evening" placeholder="Evening notes..."></textarea>
+    <div class="diary-section">
+      <h4>Cravings (0-10)</h4>
+      <input type="number" id="cravings" min="0" max="10">
+    </div>
 
-    <button class="submitBtn">Save Diary</button>
-  </form>
+    <div class="diary-section">
+      <h4>Morning</h4>
+      <textarea id="morning" rows="2"></textarea>
+    </div>
+
+    <div class="diary-section">
+      <h4>Afternoon</h4>
+      <textarea id="afternoon" rows="2"></textarea>
+    </div>
+
+    <div class="diary-section">
+      <h4>Evening</h4>
+      <textarea id="evening" rows="2"></textarea>
+    </div>
+
+    <button class="submitBtn" id="saveDiary">Save</button>
+  </div>
 </div>
 
 <h2>Helpful Links</h2>
@@ -206,56 +237,60 @@ button.submitBtn:hover { background: #43a047; }
 
 <script src="affirmations.js"></script>
 <script>
-// Elements
-const title=document.getElementById('title');
-const category=document.getElementById('category');
-const start=document.getElementById('start');
-const end=document.getElementById('end');
-const link=document.getElementById('link');
-const recurrence=document.getElementById('recurrence');
-const sobrietyStart=document.getElementById('sobrietyStart');
-const eventForm=document.getElementById('eventForm');
-const sobrietyForm=document.getElementById('sobrietyForm');
-const soberCounter=document.getElementById('soberCounter');
-const eventsDiv=document.getElementById('events');
-const todayDate=document.getElementById('todayDate');
-const todaySober=document.getElementById('todaySober');
-const todayEventsDiv=document.getElementById('todayEvents');
-const weekEventsDiv=document.getElementById('weekEvents');
-const todayAffirmationDiv=document.getElementById('todayAffirmation');
-
-// Diary Elements
-const diaryForm=document.getElementById('diaryForm');
-const diaryGoal=document.getElementById('diaryGoal');
-const grateful1=document.getElementById('grateful1');
-const grateful2=document.getElementById('grateful2');
-const grateful3=document.getElementById('grateful3');
-const emotion1=document.getElementById('emotion1');
-const emotion2=document.getElementById('emotion2');
-const emotion3=document.getElementById('emotion3');
-const cravings=document.getElementById('cravings');
-const morning=document.getElementById('morning');
-const afternoon=document.getElementById('afternoon');
-const evening=document.getElementById('evening');
-
-// Utilities
-function daysBetween(start){return Math.floor((new Date()-new Date(start))/(1000*60*60*24));}
+// --- Tabs ---
 function showTab(tab){
-  document.getElementById('todayTab').style.display=tab==='today'?'block':'none';
-  document.getElementById('scheduleTab').style.display=tab==='schedule'?'block':'none';
-  document.getElementById('riskTab').style.display=tab==='risk'?'block':'none';
-  document.getElementById('diaryTab').style.display=tab==='diary'?'block':'none'?false:true;
+  document.getElementById('todayTab').style.display = tab==='today'?'block':'none';
+  document.getElementById('scheduleTab').style.display = tab==='schedule'?'block':'none';
+  document.getElementById('riskTab').style.display = tab==='risk'?'block':'none';
+  document.getElementById('diaryTab').style.display = tab==='diary'?'block':'none';
   document.querySelectorAll('.tabBtn').forEach(btn=>btn.classList.remove('active'));
   document.querySelector(`button[onclick*='${tab}']`).classList.add('active');
 }
-function nextOccurrence(e){const s=new Date(e.start);const today=new Date(); today.setHours(0,0,0,0); if(e.recurrence==='None') return s; if(e.recurrence==='Daily') return today<s?s:today; if(e.recurrence==='Weekly'){const dowDiff=(s.getDay()-today.getDay()+7)%7;const next=new Date(today); next.setDate(today.getDate()+dowDiff); return next<s?s:next;} return s;}
 
-// Load sobriety
+// --- Elements ---
+const todayDate = document.getElementById('todayDate');
+const todaySober = document.getElementById('todaySober');
+const todayAffirmationDiv = document.getElementById('todayAffirmation');
+const soberCounter = document.getElementById('soberCounter');
+
+const title = document.getElementById('title');
+const category = document.getElementById('category');
+const start = document.getElementById('start');
+const end = document.getElementById('end');
+const link = document.getElementById('link');
+const recurrence = document.getElementById('recurrence');
+
+const sobrietyStart = document.getElementById('sobrietyStart');
+const eventForm = document.getElementById('eventForm');
+const sobrietyForm = document.getElementById('sobrietyForm');
+
+const diaryDate = document.getElementById('diaryDate');
+const prevDay = document.getElementById('prevDay');
+const nextDay = document.getElementById('nextDay');
+const riskPromptDiv = document.getElementById('riskPrompt');
+
+const goalInput = document.getElementById('goal');
+const gratitudeInput = document.getElementById('gratitude');
+const emotionsInput = document.getElementById('emotions');
+const cravingsInput = document.getElementById('cravings');
+const morningInput = document.getElementById('morning');
+const afternoonInput = document.getElementById('afternoon');
+const eveningInput = document.getElementById('evening');
+const saveDiaryBtn = document.getElementById('saveDiary');
+
+// --- Utilities ---
+function daysBetween(start,end=new Date()){return Math.floor((new Date(end)-new Date(start))/(1000*60*60*24));}
+function nextOccurrence(e){const s=new Date(e.start); const today=new Date(); today.setHours(0,0,0,0); if(e.recurrence==='None') return s; if(e.recurrence==='Daily') return today<s?s:today; if(e.recurrence==='Weekly'){const dowDiff=(s.getDay()-today.getDay()+7)%7;const next=new Date(today); next.setDate(today.getDate()+dowDiff); return next<s?s:next;} return s;}
+
+// --- Load sobriety ---
 async function loadSobriety(){const res=await fetch('/api/sobriety'); if(!res.ok) return; const data=await res.json(); if(data.start_date){const days=daysBetween(data.start_date); soberCounter.textContent=`✨ ${days} days sober`; todaySober.textContent=`✨ ${days} days sober`; }}
 
-// Load events
+// --- Load events ---
 async function loadEvents(){
   const res=await fetch('/api/events'); if(!res.ok) return; const allEvents=await res.json();
+  const eventsDiv = document.getElementById('events');
+  const todayEventsDiv = document.getElementById('todayEvents');
+  const weekEventsDiv = document.getElementById('weekEvents');
   eventsDiv.innerHTML=''; todayEventsDiv.innerHTML=''; weekEventsDiv.innerHTML='';
 
   // Schedule tab
@@ -293,58 +328,67 @@ async function loadEvents(){
   });
 }
 
-// Affirmation
+// --- Affirmation ---
 function setAffirmation(){const today=new Date(); const dayOfYear=Math.floor((today-new Date(today.getFullYear(),0,0))/(1000*60*60*24)); todayAffirmationDiv.textContent=affirmations[dayOfYear % affirmations.length];}
 
-// Load Diary
-async function loadDiary(){
-  const res=await fetch('/api/diary/today');
-  if(!res.ok) return;
-  const data=await res.json();
-  if(!data) return;
-  diaryGoal.value=data.goal||'';
-  grateful1.value=data.grateful1||'';
-  grateful2.value=data.grateful2||'';
-  grateful3.value=data.grateful3||'';
-  emotion1.value=data.emotion1||'';
-  emotion2.value=data.emotion2||'';
-  emotion3.value=data.emotion3||'';
-  cravings.value=data.cravings||'';
-  morning.value=data.morning||'';
-  afternoon.value=data.afternoon||'';
-  evening.value=data.evening||'';
+// --- Diary ---
+async function loadDiary(date){
+  const res = await fetch(`/api/diary/${date}`);
+  const data = res.ok ? await res.json() : {};
+  goalInput.value = data.goal || '';
+  gratitudeInput.value = data.gratitude || '';
+  emotionsInput.value = data.emotions || '';
+  cravingsInput.value = data.cravings || '';
+  morningInput.value = data.morning || '';
+  afternoonInput.value = data.afternoon || '';
+  eveningInput.value = data.evening || '';
+
+  // Risk prompt
+  const soberRes = await fetch('/api/sobriety');
+  const soberData = soberRes.ok?await soberRes.json():{};
+  if(soberData.start_date){
+    const days = daysBetween(soberData.start_date,date);
+    riskPromptDiv.textContent = (days>=12 && days<=22)?"⚠️ This falls into your risk cycle. Have you checked in today?":"";
+  } else riskPromptDiv.textContent = '';
 }
 
-// Save Diary
-async function saveDiary(){
-  const payload={
-    goal: diaryGoal.value,
-    grateful1: grateful1.value,
-    grateful2: grateful2.value,
-    grateful3: grateful3.value,
-    emotion1: emotion1.value,
-    emotion2: emotion2.value,
-    emotion3: emotion3.value,
-    cravings: cravings.value,
-    morning: morning.value,
-    afternoon: afternoon.value,
-    evening: evening.value
-  };
-  await fetch('/api/diary/today',{method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)});
+// --- Save Diary ---
+saveDiaryBtn.onclick = async () => {
+  await fetch('/api/diary', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({
+      date: diaryDate.value,
+      goal: goalInput.value,
+      gratitude: gratitudeInput.value,
+      emotions: emotionsInput.value,
+      cravings: cravingsInput.value,
+      morning: morningInput.value,
+      afternoon: afternoonInput.value,
+      evening: eveningInput.value
+    })
+  });
   alert('Diary saved!');
-}
+};
 
-// On load
+// --- Pagination ---
+prevDay.onclick = () => { const d=new Date(diaryDate.value); d.setDate(d.getDate()-1); diaryDate.value=d.toISOString().slice(0,10); loadDiary(diaryDate.value); };
+nextDay.onclick = () => { const d=new Date(diaryDate.value); d.setDate(d.getDate()+1); diaryDate.value=d.toISOString().slice(0,10); loadDiary(diaryDate.value); };
+diaryDate.onchange = ()=> loadDiary(diaryDate.value);
+
+// --- On Load ---
 window.addEventListener('DOMContentLoaded',()=>{
-  todayDate.textContent=new Date().toDateString();
+  todayDate.textContent = new Date().toDateString();
+  const todayStr = new Date().toISOString().slice(0,10);
+  diaryDate.value = todayStr;
+
   loadSobriety();
   loadEvents();
   setAffirmation();
-  loadDiary();
+  loadDiary(todayStr);
 
   sobrietyForm.onsubmit=async e=>{e.preventDefault(); await fetch('/api/sobriety',{method:'POST',headers:{'Content-Type':'application/json'},body: JSON.stringify({start_date: sobrietyStart.value})}); loadSobriety();};
   eventForm.onsubmit=async e=>{e.preventDefault(); await fetch('/api/events',{method:'POST',headers:{'Content-Type':'application/json'},body: JSON.stringify({title:title.value,category:category.value,start:start.value,end:end.value,link:link.value,recurrence:recurrence.value})}); loadEvents(); eventForm.reset();};
-  diaryForm.onsubmit=async e=>{e.preventDefault(); await saveDiary();};
 });
 </script>
 </body>
