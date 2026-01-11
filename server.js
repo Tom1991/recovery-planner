@@ -86,49 +86,67 @@ app.delete('/api/events/:id', async (req, res) => {
   res.json({ success: true });
 });
 
-/* ------------------ TODAY DIARY ------------------ */
+/* ------------------ DIARY ------------------ */
 
-// Get today's diary
-app.get('/api/diary/today', async (req, res) => {
-  const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
-  const result = await pool.query(
-    'SELECT * FROM diary WHERE date = $1',
-    [today]
-  );
-  res.json(result.rows[0] || {});
+// Get diary entry for a specific date
+app.get('/api/diary/:date', async (req, res) => {
+  try {
+    const date = req.params.date; // Expecting YYYY-MM-DD
+    const result = await pool.query(
+      'SELECT * FROM diary WHERE "date" = $1',
+      [date]
+    );
+    res.json(result.rows[0] || {});
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch diary entry' });
+  }
 });
 
-// Save today's diary
-app.post('/api/diary/today', async (req, res) => {
-  const today = new Date().toISOString().split('T')[0];
-  const {
-    goal, grateful1, grateful2, grateful3,
-    emotion1, emotion2, emotion3, cravings,
-    morning, afternoon, evening
-  } = req.body;
+// Save or update diary entry
+app.post('/api/diary', async (req, res) => {
+  try {
+    const {
+      date,
+      goal,
+      grateful1,
+      grateful2,
+      grateful3,
+      emotion1,
+      emotion2,
+      emotion3,
+      cravings,
+      morning,
+      afternoon,
+      evening
+    } = req.body;
 
-  // Upsert: insert if not exists, else update
-  await pool.query(`
-    INSERT INTO diary (date, goal, grateful1, grateful2, grateful3, emotion1, emotion2, emotion3, cravings, morning, afternoon, evening)
-    VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)
-    ON CONFLICT (date)
-    DO UPDATE SET
-      goal = EXCLUDED.goal,
-      grateful1 = EXCLUDED.grateful1,
-      grateful2 = EXCLUDED.grateful2,
-      grateful3 = EXCLUDED.grateful3,
-      emotion1 = EXCLUDED.emotion1,
-      emotion2 = EXCLUDED.emotion2,
-      emotion3 = EXCLUDED.emotion3,
-      cravings = EXCLUDED.cravings,
-      morning = EXCLUDED.morning,
-      afternoon = EXCLUDED.afternoon,
-      evening = EXCLUDED.evening
-  `, [today, goal, grateful1, grateful2, grateful3, emotion1, emotion2, emotion3, cravings, morning, afternoon, evening]);
+    await pool.query(
+      `INSERT INTO diary 
+      ("date", goal, grateful1, grateful2, grateful3, emotion1, emotion2, emotion3, cravings, morning, afternoon, evening)
+      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)
+      ON CONFLICT ("date") 
+      DO UPDATE SET
+        goal = EXCLUDED.goal,
+        grateful1 = EXCLUDED.grateful1,
+        grateful2 = EXCLUDED.grateful2,
+        grateful3 = EXCLUDED.grateful3,
+        emotion1 = EXCLUDED.emotion1,
+        emotion2 = EXCLUDED.emotion2,
+        emotion3 = EXCLUDED.emotion3,
+        cravings = EXCLUDED.cravings,
+        morning = EXCLUDED.morning,
+        afternoon = EXCLUDED.afternoon,
+        evening = EXCLUDED.evening`,
+      [date, goal, grateful1, grateful2, grateful3, emotion1, emotion2, emotion3, cravings, morning, afternoon, evening]
+    );
 
-  res.json({ success: true });
+    res.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to save diary entry' });
+  }
 });
-
 
 /* ------------------ SERVER ------------------ */
 

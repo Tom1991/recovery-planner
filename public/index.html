@@ -5,48 +5,103 @@
 <title>Recovery Planner</title>
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-body { font-family: 'Roboto', sans-serif; max-width: 900px; margin: 40px auto; background: #f5f7f8; color: #333; }
-h1 { text-align: center; }
-button.tabBtn { padding: 8px 16px; border-radius: 6px; border: none; cursor: pointer; background: #eee; transition: background 0.2s; }
-button.tabBtn.active { background: #4caf50; color: #fff; }
-button.tabBtn:hover { background: #ddd; }
-form { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
-input, select, button, textarea { padding: 8px; border-radius: 4px; border: 1px solid #ccc; font-family: 'Roboto', sans-serif; }
-button.submitBtn { background: #4caf50; color: white; cursor: pointer; border: none; transition: background 0.2s; }
-button.submitBtn:hover { background: #43a047; }
+  body { font-family: 'Roboto', sans-serif; max-width: 900px; margin: 40px auto; background: #f5f7f8; color: #333; }
+  h1 { text-align: center; }
 
-.event { padding: 10px; border-left: 4px solid #4caf50; background: #fff; margin-bottom: 8px; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
-.event-info { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; font-size: 0.9em; color:#444; }
-.event-info a { font-size:0.9em; color:#1976d2; text-decoration:none; }
-.event-info a:hover { text-decoration:underline; }
+  button.tabBtn { padding: 8px 16px; border-radius: 6px; border: none; cursor: pointer; background: #eee; transition: background 0.2s; }
+  button.tabBtn.active { background: #4caf50; color: #fff; }
+  button.tabBtn:hover { background: #ddd; }
 
-.AA { border-color: #1976d2; }
-.Personal { border-color: #4caf50; }
-.Reminder { border-color: #ff9800; }
+  form { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; background: #fff; padding: 12px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+  input, select, button, textarea { padding: 8px; border-radius: 4px; border: 1px solid #ccc; }
 
-#todayDashboard { padding:16px; background:#e6f4ea; border-radius:12px; margin-bottom:24px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+  button.submitBtn { background: #4caf50; color: white; cursor: pointer; border: none; transition: background 0.2s; }
+  button.submitBtn:hover { background: #43a047; }
 
-.links a { display: inline-block; margin-bottom: 6px; color:#1976d2; text-decoration:none; }
-.links a:hover { text-decoration: underline; }
+  .event {
+    padding: 10px;
+    border-left: 4px solid #4caf50;
+    background: #fff;
+    margin-bottom: 8px;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
 
-.sober { font-size: 1.4em; font-weight: bold; margin-bottom: 16px; }
+  .event-info {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+    font-size: 0.9em;
+    color:#444;
+  }
 
-.deleteBtn { background: #e53935; margin-left: 8px; padding: 4px 8px; border:none; border-radius:4px; color:white; cursor:pointer; }
-.deleteBtn:hover { background: #d32f2f; }
+  .event-info a { font-size:0.9em; color:#1976d2; text-decoration:none; }
+  .event-info a:hover { text-decoration:underline; }
 
-textarea { width: 100%; resize: vertical; }
+  .AA { border-color: #1976d2; }
+  .Personal { border-color: #4caf50; }
+  .Reminder { border-color: #ff9800; }
 
-.diary-container { background:#fff; padding:16px; border-radius:12px; box-shadow:0 2px 6px rgba(0,0,0,0.1); margin-bottom:24px; }
-.diary-section { margin-bottom:16px; }
-.diary-section h4 { margin-bottom:6px; font-weight:500; }
-#riskPrompt { color:#d32f2f; font-weight:bold; margin-bottom:12px; }
+  #todayDashboard { padding:16px; background:#e6f4ea; border-radius:12px; margin-bottom:24px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
 
-.pagination { display:flex; gap:8px; margin-bottom:16px; align-items:center; }
-.pagination button { padding:6px 12px; border:none; border-radius:4px; background:#1976d2; color:white; cursor:pointer; }
-.pagination button:hover { background:#1565c0; }
-.pagination input { padding:6px 12px; border-radius:4px; border:1px solid #ccc; }
+  .links a { display: inline-block; margin-bottom: 6px; color:#1976d2; text-decoration:none; }
+  .links a:hover { text-decoration: underline; }
+
+  .sober { font-size: 1.4em; font-weight: bold; margin-bottom: 16px; }
+
+  .deleteBtn { background: #e53935; margin-left: 8px; padding: 4px 8px; border:none; border-radius:4px; color:white; cursor:pointer; }
+  .deleteBtn:hover { background: #d32f2f; }
+
+  /* Diary styling: vertical flow */
+  #diaryWrap {
+    background:#fff;
+    padding:16px;
+    border-radius:12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+  #diaryNav { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:16px; }
+  #diaryNav button { padding: 8px 12px; border-radius: 6px; border: 1px solid #ccc; background:#f5f5f5; cursor:pointer; }
+  #diaryNav button:hover { background:#eee; }
+
+  #diaryPrompt { margin-bottom:12px; color:#d32f2f; font-style: italic; }
+
+  #diaryForm {
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    background:#fff;
+    padding:0;
+    border-radius:0;
+    box-shadow:none;
+    margin:0;
+  }
+
+  #diaryForm label { font-weight:700; margin-top:6px; }
+  #diaryForm input, #diaryForm textarea { width:100%; }
+  #diaryForm textarea { resize: vertical; }
+
+  .diarySmall { font-size: 0.9em; color:#666; margin-top:-6px; }
+
+  .diarySaveBtn {
+    background:#4caf50;
+    color:white;
+    border:none;
+    border-radius:8px;
+    padding:12px 16px;
+    cursor:pointer;
+    width: fit-content;
+  }
+  .diarySaveBtn:hover { background:#43a047; }
+
 </style>
 </head>
+
 <body>
 <h1>🌱 Recovery Planner</h1>
 
@@ -83,7 +138,7 @@ textarea { width: 100%; resize: vertical; }
   <form id="sobrietyForm">
     <label>Sobriety start date:</label>
     <input type="date" id="sobrietyStart" />
-    <button class="submitBtn">Save</button>
+    <button class="submitBtn" type="submit">Save</button>
   </form>
 
   <h2>Add Event / Meeting</h2>
@@ -102,21 +157,20 @@ textarea { width: 100%; resize: vertical; }
       <option>Daily</option>
       <option>Weekly</option>
     </select>
-    <button class="submitBtn">Add</button>
+    <button class="submitBtn" type="submit">Add</button>
   </form>
 
   <h2>Your Schedule</h2>
   <div id="events"></div>
 </div>
 
-<!-- Risk Cycle Tab -->
-<div id="riskTab" style="display:none;">
+<!-- Risk Cycle Tab (kept as you had it) -->
+<div id="riskTab" style="display:none;" class="card">
   <h2>🧠 2–3 Week Cycle Prevention & Honesty Plan</h2>
-  <p><strong>Purpose:</strong> Interrupt my predictable 2–3 week risk cycle by prioritising early connection, low‑detail honesty, and nervous‑system regulation.</p>
+  <p><strong>Purpose:</strong> Interrupt my predictable 2–3 week risk cycle by prioritising early connection, low-detail honesty, and nervous-system regulation.</p>
 
   <h3>1. Name the Pattern</h3>
-  <p><strong>Cycle name:</strong> The Danger Zone<br>
-  <strong>Typical timing:</strong> Around weeks 2–3 after a stable period.</p>
+  <p><strong>Cycle name:</strong> The Danger Zone<br><strong>Typical timing:</strong> Around weeks 2–3 after a stable period.</p>
   <hr>
 
   <h3>2. Early Warning Signs</h3>
@@ -173,58 +227,51 @@ textarea { width: 100%; resize: vertical; }
   <hr>
 
   <h3>9. Anchor Statement</h3>
-  <p>“My job isn’t to stay sober perfectly — it’s to stay connected early.”p>
+  <p>“My job isn’t to stay sober perfectly — it’s to stay connected early.”</p>
 </div>
 
 <!-- Diary Tab -->
 <div id="diaryTab" style="display:none;">
-  <h2>Daily Diary</h2>
+  <div id="diaryWrap">
 
-  <div class="pagination">
-    <button id="prevDay">&laquo; Previous</button>
-    <input type="date" id="diaryDate">
-    <button id="nextDay">Next &raquo;</button>
-  </div>
-
-  <div id="riskPrompt"></div>
-
-  <div class="diary-container">
-    <div class="diary-section">
-      <h4>Goal for the day</h4>
-      <input type="text" id="goal">
+    <div id="diaryNav">
+      <button type="button" onclick="changeDiaryDate(-1)">← Previous Day</button>
+      <div id="diaryDateDisplay" style="font-weight:700;"></div>
+      <button type="button" onclick="changeDiaryDate(1)">Next Day →</button>
     </div>
 
-    <div class="diary-section">
-      <h4>3 Things I am grateful for today</h4>
-      <textarea id="gratitude" rows="2"></textarea>
-    </div>
+    <div id="diaryPrompt"></div>
 
-    <div class="diary-section">
-      <h4>3 Emotions</h4>
-      <textarea id="emotions" rows="2"></textarea>
-    </div>
+    <form id="diaryForm">
+      <label for="goal">Goal for the day:</label>
+      <textarea id="goal" rows="2" placeholder="Your goal for today..."></textarea>
 
-    <div class="diary-section">
-      <h4>Cravings (0-10)</h4>
-      <input type="number" id="cravings" min="0" max="10">
-    </div>
+      <label>3 Things I am grateful for today:</label>
+      <input id="grateful1" type="text" placeholder="Grateful 1">
+      <input id="grateful2" type="text" placeholder="Grateful 2">
+      <input id="grateful3" type="text" placeholder="Grateful 3">
 
-    <div class="diary-section">
-      <h4>Morning</h4>
-      <textarea id="morning" rows="2"></textarea>
-    </div>
+      <label>3 Emotions:</label>
+      <input id="emotion1" type="text" placeholder="Emotion 1">
+      <input id="emotion2" type="text" placeholder="Emotion 2">
+      <input id="emotion3" type="text" placeholder="Emotion 3">
 
-    <div class="diary-section">
-      <h4>Afternoon</h4>
-      <textarea id="afternoon" rows="2"></textarea>
-    </div>
+      <label for="cravings">Cravings (0–10):</label>
+      <input id="cravings" type="number" min="0" max="10" placeholder="0">
 
-    <div class="diary-section">
-      <h4>Evening</h4>
-      <textarea id="evening" rows="2"></textarea>
-    </div>
+      <label for="morning">Morning:</label>
+      <textarea id="morning" rows="4" placeholder="Morning notes..."></textarea>
 
-    <button class="submitBtn" id="saveDiary">Save</button>
+      <label for="afternoon">Afternoon:</label>
+      <textarea id="afternoon" rows="4" placeholder="Afternoon notes..."></textarea>
+
+      <label for="evening">Evening:</label>
+      <textarea id="evening" rows="4" placeholder="Evening notes..."></textarea>
+
+      <button class="diarySaveBtn" type="submit">Save Entry</button>
+      <div class="diarySmall" id="diaryStatus"></div>
+    </form>
+
   </div>
 </div>
 
@@ -237,158 +284,343 @@ textarea { width: 100%; resize: vertical; }
 
 <script src="affirmations.js"></script>
 <script>
-// --- Tabs ---
-function showTab(tab){
-  document.getElementById('todayTab').style.display = tab==='today'?'block':'none';
-  document.getElementById('scheduleTab').style.display = tab==='schedule'?'block':'none';
-  document.getElementById('riskTab').style.display = tab==='risk'?'block':'none';
-  document.getElementById('diaryTab').style.display = tab==='diary'?'block':'none';
-  document.querySelectorAll('.tabBtn').forEach(btn=>btn.classList.remove('active'));
-  document.querySelector(`button[onclick*='${tab}']`).classList.add('active');
-}
-
-// --- Elements ---
-const todayDate = document.getElementById('todayDate');
-const todaySober = document.getElementById('todaySober');
-const todayAffirmationDiv = document.getElementById('todayAffirmation');
-const soberCounter = document.getElementById('soberCounter');
-
-const title = document.getElementById('title');
-const category = document.getElementById('category');
-const start = document.getElementById('start');
-const end = document.getElementById('end');
-const link = document.getElementById('link');
-const recurrence = document.getElementById('recurrence');
-
-const sobrietyStart = document.getElementById('sobrietyStart');
+/* ---------------- Elements ---------------- */
+const titleEl = document.getElementById('title');
+const categoryEl = document.getElementById('category');
+const startEl = document.getElementById('start');
+const endEl = document.getElementById('end');
+const linkEl = document.getElementById('link');
+const recurrenceEl = document.getElementById('recurrence');
+const sobrietyStartEl = document.getElementById('sobrietyStart');
 const eventForm = document.getElementById('eventForm');
 const sobrietyForm = document.getElementById('sobrietyForm');
 
-const diaryDate = document.getElementById('diaryDate');
-const prevDay = document.getElementById('prevDay');
-const nextDay = document.getElementById('nextDay');
-const riskPromptDiv = document.getElementById('riskPrompt');
+const soberCounter = document.getElementById('soberCounter');
+const todayDateEl = document.getElementById('todayDate');
+const todaySoberEl = document.getElementById('todaySober');
+const todayAffirmationEl = document.getElementById('todayAffirmation');
+const eventsDiv = document.getElementById('events');
+const todayEventsDiv = document.getElementById('todayEvents');
+const weekEventsDiv = document.getElementById('weekEvents');
 
-const goalInput = document.getElementById('goal');
-const gratitudeInput = document.getElementById('gratitude');
-const emotionsInput = document.getElementById('emotions');
-const cravingsInput = document.getElementById('cravings');
-const morningInput = document.getElementById('morning');
-const afternoonInput = document.getElementById('afternoon');
-const eveningInput = document.getElementById('evening');
-const saveDiaryBtn = document.getElementById('saveDiary');
+/* Diary elements */
+const diaryForm = document.getElementById('diaryForm');
+const diaryDateDisplay = document.getElementById('diaryDateDisplay');
+const diaryPromptEl = document.getElementById('diaryPrompt');
+const diaryStatusEl = document.getElementById('diaryStatus');
 
-// --- Utilities ---
-function daysBetween(start,end=new Date()){return Math.floor((new Date(end)-new Date(start))/(1000*60*60*24));}
-function nextOccurrence(e){const s=new Date(e.start); const today=new Date(); today.setHours(0,0,0,0); if(e.recurrence==='None') return s; if(e.recurrence==='Daily') return today<s?s:today; if(e.recurrence==='Weekly'){const dowDiff=(s.getDay()-today.getDay()+7)%7;const next=new Date(today); next.setDate(today.getDate()+dowDiff); return next<s?s:next;} return s;}
+const goalEl = document.getElementById('goal');
+const grateful1El = document.getElementById('grateful1');
+const grateful2El = document.getElementById('grateful2');
+const grateful3El = document.getElementById('grateful3');
+const emotion1El = document.getElementById('emotion1');
+const emotion2El = document.getElementById('emotion2');
+const emotion3El = document.getElementById('emotion3');
+const cravingsEl = document.getElementById('cravings');
+const morningEl = document.getElementById('morning');
+const afternoonEl = document.getElementById('afternoon');
+const eveningEl = document.getElementById('evening');
 
-// --- Load sobriety ---
-async function loadSobriety(){const res=await fetch('/api/sobriety'); if(!res.ok) return; const data=await res.json(); if(data.start_date){const days=daysBetween(data.start_date); soberCounter.textContent=`✨ ${days} days sober`; todaySober.textContent=`✨ ${days} days sober`; }}
+/* ---------------- Utilities ---------------- */
+function showTab(tab){
+  document.getElementById('todayTab').style.display = tab==='today' ? 'block' : 'none';
+  document.getElementById('scheduleTab').style.display = tab==='schedule' ? 'block' : 'none';
+  document.getElementById('riskTab').style.display = tab==='risk' ? 'block' : 'none';
+  document.getElementById('diaryTab').style.display = tab==='diary' ? 'block' : 'none';
 
-// --- Load events ---
+  document.querySelectorAll('.tabBtn').forEach(btn => btn.classList.remove('active'));
+  document.querySelector(`button[onclick*="${tab}"]`).classList.add('active');
+}
+
+function startOfDay(d){
+  const x = new Date(d);
+  x.setHours(0,0,0,0);
+  return x;
+}
+function formatISODate(d){
+  // YYYY-MM-DD in local time
+  const y = d.getFullYear();
+  const m = String(d.getMonth()+1).padStart(2,'0');
+  const day = String(d.getDate()).padStart(2,'0');
+  return `${y}-${m}-${day}`;
+}
+function daysBetweenDates(a, b){
+  // difference in whole days between two Date objects (date-only)
+  const aa = startOfDay(a).getTime();
+  const bb = startOfDay(b).getTime();
+  return Math.floor((bb - aa) / (1000*60*60*24));
+}
+
+function nextOccurrence(e){
+  const s = new Date(e.start);
+  const today = startOfDay(new Date());
+
+  if(e.recurrence === 'None') return s;
+
+  if(e.recurrence === 'Daily'){
+    // show every day from start date onwards
+    return today < startOfDay(s) ? s : today;
+  }
+
+  if(e.recurrence === 'Weekly'){
+    const sDay = s.getDay();
+    const tDay = today.getDay();
+    const diff = (sDay - tDay + 7) % 7;
+    const next = new Date(today);
+    next.setDate(today.getDate() + diff);
+    return next < startOfDay(s) ? s : next;
+  }
+
+  return s;
+}
+
+/* ---------------- Sobriety ---------------- */
+let sobrietyStartISO = null;
+
+async function loadSobriety(){
+  const res = await fetch('/api/sobriety');
+  if(!res.ok) return;
+  const data = await res.json();
+  if(data.start_date){
+    sobrietyStartISO = data.start_date; // usually "YYYY-MM-DD"
+    const start = new Date(data.start_date);
+    const days = daysBetweenDates(start, new Date());
+    soberCounter.textContent = `✨ ${days} days sober`;
+    todaySoberEl.textContent = `✨ ${days} days sober`;
+  }
+}
+
+/* ---------------- Events ---------------- */
+function buildEventElement(e){
+  const s = new Date(e.start);
+  const en = new Date(e.end);
+
+  const el = document.createElement('div');
+  el.className = `event ${e.category}`;
+
+  const info = document.createElement('div');
+  info.className = 'event-info';
+
+  const recurrencePart = (e.recurrence && e.recurrence !== 'None')
+    ? `<span style="font-size:0.85em;color:#666;">🔁 ${e.recurrence}</span>`
+    : '';
+
+  const linkPart = e.link ? `<a href="${e.link}" target="_blank" rel="noopener">Link</a>` : '';
+
+  info.innerHTML = `
+    <strong>${e.title}</strong>
+    ${recurrencePart}
+    <span>${s.toLocaleDateString()} ${s.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})} – ${en.toLocaleDateString()} ${en.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</span>
+    ${linkPart}
+  `;
+
+  const del = document.createElement('button');
+  del.textContent = 'Delete';
+  del.className = 'deleteBtn';
+  del.onclick = async () => {
+    const ok = confirm(`Delete "${e.title}"?\nThis cannot be undone.`);
+    if(!ok) return;
+    await fetch(`/api/events/${e.id}`, { method: 'DELETE' });
+    loadEvents();
+  };
+
+  el.appendChild(info);
+  el.appendChild(del);
+  return el;
+}
+
 async function loadEvents(){
-  const res=await fetch('/api/events'); if(!res.ok) return; const allEvents=await res.json();
-  const eventsDiv = document.getElementById('events');
-  const todayEventsDiv = document.getElementById('todayEvents');
-  const weekEventsDiv = document.getElementById('weekEvents');
-  eventsDiv.innerHTML=''; todayEventsDiv.innerHTML=''; weekEventsDiv.innerHTML='';
+  const res = await fetch('/api/events');
+  if(!res.ok) return;
+  const allEvents = await res.json();
 
-  // Schedule tab
-  allEvents.forEach(e=>{
-    const s=new Date(e.start), en=new Date(e.end);
-    const el=document.createElement('div'); el.className=`event ${e.category}`;
-    const info=document.createElement('div'); info.className='event-info';
-    info.innerHTML=`<strong>${e.title}</strong> ${e.recurrence!=='None'?`<span style="font-size:0.85em;color:#666;">🔁 ${e.recurrence}</span>`:''} ${s.toLocaleDateString()} ${s.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}–${en.toLocaleDateString()} ${en.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})} ${e.link?`<a href='${e.link}' target='_blank'>Link</a>`:''}`;
-    const del=document.createElement('button'); del.textContent='Delete'; del.className='deleteBtn'; del.onclick=async()=>{if(!confirm(`Delete "${e.title}"?`)) return; await fetch(`/api/events/${e.id}`,{method:'DELETE'}); loadEvents();};
-    el.appendChild(info); el.appendChild(del); eventsDiv.appendChild(el);
+  eventsDiv.innerHTML = '';
+  todayEventsDiv.innerHTML = '';
+  weekEventsDiv.innerHTML = '';
+
+  // Schedule list (all)
+  allEvents.forEach(e => eventsDiv.appendChild(buildEventElement(e)));
+
+  // Today + next 7 days (based on recurrence)
+  const today = startOfDay(new Date());
+  const endWeek = new Date(today);
+  endWeek.setDate(today.getDate() + 7);
+
+  const todayList = [];
+  const weekList = [];
+
+  allEvents.forEach(e => {
+    const occ = startOfDay(nextOccurrence(e));
+    if(occ.getTime() === today.getTime()){
+      todayList.push(e);
+    } else if(occ > today && occ <= endWeek){
+      weekList.push(e);
+    }
   });
 
-  const today=new Date(); today.setHours(0,0,0,0);
-  const todayEvents=allEvents.filter(e=>nextOccurrence(e).toDateString()===today.toDateString());
-  if(todayEvents.length===0) todayEventsDiv.textContent='No events today.';
-  else todayEvents.forEach(e=>{
-    const s=new Date(e.start), en=new Date(e.end);
-    const el=document.createElement('div'); el.className=`event ${e.category}`;
-    const info=document.createElement('div'); info.className='event-info';
-    info.innerHTML=`<strong>${e.title}</strong> ${e.recurrence!=='None'?`<span style="font-size:0.85em;color:#666;">🔁 ${e.recurrence}</span>`:''} ${s.toLocaleDateString()} ${s.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}–${en.toLocaleDateString()} ${en.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})} ${e.link?`<a href='${e.link}' target='_blank'>Link</a>`:''}`;
-    const del=document.createElement('button'); del.textContent='Delete'; del.className='deleteBtn'; del.onclick=async()=>{if(!confirm(`Delete "${e.title}"?`)) return; await fetch(`/api/events/${e.id}`,{method:'DELETE'}); loadEvents();};
-    el.appendChild(info); el.appendChild(del); todayEventsDiv.appendChild(el);
-  });
+  if(todayList.length === 0){
+    todayEventsDiv.textContent = 'No events today.';
+  } else {
+    todayList.forEach(e => todayEventsDiv.appendChild(buildEventElement(e)));
+  }
 
-  const nextWeek=new Date(today); nextWeek.setDate(today.getDate()+7);
-  const weekEvents=allEvents.filter(e=>{const n=nextOccurrence(e); return n>today && n<=nextWeek;});
-  if(weekEvents.length===0) weekEventsDiv.textContent='No upcoming events this week.';
-  else weekEvents.forEach(e=>{
-    const s=new Date(e.start), en=new Date(e.end);
-    const el=document.createElement('div'); el.className=`event ${e.category}`;
-    const info=document.createElement('div'); info.className='event-info';
-    info.innerHTML=`<strong>${e.title}</strong> ${e.recurrence!=='None'?`<span style="font-size:0.85em;color:#666;">🔁 ${e.recurrence}</span>`:''} ${s.toLocaleDateString()} ${s.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}–${en.toLocaleDateString()} ${en.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})} ${e.link?`<a href='${e.link}' target='_blank'>Link</a>`:''}`;
-    const del=document.createElement('button'); del.textContent='Delete'; del.className='deleteBtn'; del.onclick=async()=>{if(!confirm(`Delete "${e.title}"?`)) return; await fetch(`/api/events/${e.id}`,{method:'DELETE'}); loadEvents();};
-    el.appendChild(info); el.appendChild(del); weekEventsDiv.appendChild(el);
-  });
+  if(weekList.length === 0){
+    weekEventsDiv.textContent = 'No upcoming events this week.';
+  } else {
+    weekList.forEach(e => weekEventsDiv.appendChild(buildEventElement(e)));
+  }
 }
 
-// --- Affirmation ---
-function setAffirmation(){const today=new Date(); const dayOfYear=Math.floor((today-new Date(today.getFullYear(),0,0))/(1000*60*60*24)); todayAffirmationDiv.textContent=affirmations[dayOfYear % affirmations.length];}
-
-// --- Diary ---
-async function loadDiary(date){
-  const res = await fetch(`/api/diary/${date}`);
-  const data = res.ok ? await res.json() : {};
-  goalInput.value = data.goal || '';
-  gratitudeInput.value = data.gratitude || '';
-  emotionsInput.value = data.emotions || '';
-  cravingsInput.value = data.cravings || '';
-  morningInput.value = data.morning || '';
-  afternoonInput.value = data.afternoon || '';
-  eveningInput.value = data.evening || '';
-
-  // Risk prompt
-  const soberRes = await fetch('/api/sobriety');
-  const soberData = soberRes.ok?await soberRes.json():{};
-  if(soberData.start_date){
-    const days = daysBetween(soberData.start_date,date);
-    riskPromptDiv.textContent = (days>=12 && days<=22)?"⚠️ This falls into your risk cycle. Have you checked in today?":"";
-  } else riskPromptDiv.textContent = '';
+/* ---------------- Affirmation ---------------- */
+function setAffirmation(){
+  if(typeof affirmations === 'undefined' || !Array.isArray(affirmations) || affirmations.length === 0){
+    todayAffirmationEl.textContent = 'Affirmations not loaded.';
+    return;
+  }
+  const today = new Date();
+  const start = new Date(today.getFullYear(), 0, 0);
+  const dayOfYear = Math.floor((today - start) / (1000*60*60*24));
+  todayAffirmationEl.textContent = affirmations[dayOfYear % affirmations.length];
 }
 
-// --- Save Diary ---
-saveDiaryBtn.onclick = async () => {
-  await fetch('/api/diary', {
+/* ---------------- Diary ---------------- */
+let diaryDate = new Date();
+
+function setDiaryPrompt(){
+  diaryPromptEl.textContent = '';
+  if(!sobrietyStartISO) return;
+
+  const start = new Date(sobrietyStartISO);
+  const dayNum = daysBetweenDates(start, diaryDate) + 1; // day 1 = start day
+
+  if(dayNum >= 12 && dayNum <= 22){
+    diaryPromptEl.textContent = '⚠️ This date falls into your 2–3 week risk cycle. Have you checked in today?';
+  }
+}
+
+function clearDiaryFields(){
+  goalEl.value = '';
+  grateful1El.value = '';
+  grateful2El.value = '';
+  grateful3El.value = '';
+  emotion1El.value = '';
+  emotion2El.value = '';
+  emotion3El.value = '';
+  cravingsEl.value = '';
+  morningEl.value = '';
+  afternoonEl.value = '';
+  eveningEl.value = '';
+}
+
+async function loadDiary(){
+  diaryStatusEl.textContent = '';
+  diaryDateDisplay.textContent = diaryDate.toDateString();
+  setDiaryPrompt();
+
+  const iso = formatISODate(diaryDate);
+  const res = await fetch(`/api/diary/${iso}`);
+  if(!res.ok){
+    // if server returns 404/empty, we just clear fields
+    clearDiaryFields();
+    return;
+  }
+  const data = await res.json();
+
+  // If empty object returned, clear
+  if(!data || Object.keys(data).length === 0){
+    clearDiaryFields();
+    return;
+  }
+
+  goalEl.value = data.goal || '';
+  grateful1El.value = data.grateful1 || '';
+  grateful2El.value = data.grateful2 || '';
+  grateful3El.value = data.grateful3 || '';
+  emotion1El.value = data.emotion1 || '';
+  emotion2El.value = data.emotion2 || '';
+  emotion3El.value = data.emotion3 || '';
+  cravingsEl.value = (data.cravings === null || data.cravings === undefined) ? '' : data.cravings;
+  morningEl.value = data.morning || '';
+  afternoonEl.value = data.afternoon || '';
+  eveningEl.value = data.evening || '';
+}
+
+function changeDiaryDate(delta){
+  diaryDate.setDate(diaryDate.getDate() + delta);
+  loadDiary();
+}
+
+diaryForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  diaryStatusEl.textContent = 'Saving...';
+
+  const payload = {
+    date: formatISODate(diaryDate),
+    goal: goalEl.value,
+    grateful1: grateful1El.value,
+    grateful2: grateful2El.value,
+    grateful3: grateful3El.value,
+    emotion1: emotion1El.value,
+    emotion2: emotion2El.value,
+    emotion3: emotion3El.value,
+    cravings: cravingsEl.value === '' ? null : Number(cravingsEl.value),
+    morning: morningEl.value,
+    afternoon: afternoonEl.value,
+    evening: eveningEl.value
+  };
+
+  const res = await fetch('/api/diary', {
+    method: 'POST',
+    headers: { 'Content-Type':'application/json' },
+    body: JSON.stringify(payload)
+  });
+
+  if(!res.ok){
+    diaryStatusEl.textContent = 'Save failed. Check server logs.';
+    return;
+  }
+
+  diaryStatusEl.textContent = 'Saved ✅';
+});
+
+/* ---------------- Forms: Sobriety + Events ---------------- */
+sobrietyForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  await fetch('/api/sobriety', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({ start_date: sobrietyStartEl.value })
+  });
+  await loadSobriety();
+  // prompt might change for diary
+  setDiaryPrompt();
+});
+
+eventForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  await fetch('/api/events', {
     method:'POST',
     headers:{'Content-Type':'application/json'},
     body: JSON.stringify({
-      date: diaryDate.value,
-      goal: goalInput.value,
-      gratitude: gratitudeInput.value,
-      emotions: emotionsInput.value,
-      cravings: cravingsInput.value,
-      morning: morningInput.value,
-      afternoon: afternoonInput.value,
-      evening: eveningInput.value
+      title: titleEl.value,
+      category: categoryEl.value,
+      start: startEl.value,
+      end: endEl.value,
+      link: linkEl.value,
+      recurrence: recurrenceEl.value
     })
   });
-  alert('Diary saved!');
-};
+  await loadEvents();
+  eventForm.reset();
+});
 
-// --- Pagination ---
-prevDay.onclick = () => { const d=new Date(diaryDate.value); d.setDate(d.getDate()-1); diaryDate.value=d.toISOString().slice(0,10); loadDiary(diaryDate.value); };
-nextDay.onclick = () => { const d=new Date(diaryDate.value); d.setDate(d.getDate()+1); diaryDate.value=d.toISOString().slice(0,10); loadDiary(diaryDate.value); };
-diaryDate.onchange = ()=> loadDiary(diaryDate.value);
-
-// --- On Load ---
-window.addEventListener('DOMContentLoaded',()=>{
-  todayDate.textContent = new Date().toDateString();
-  const todayStr = new Date().toISOString().slice(0,10);
-  diaryDate.value = todayStr;
-
-  loadSobriety();
-  loadEvents();
+/* ---------------- On load ---------------- */
+window.addEventListener('DOMContentLoaded', async () => {
+  todayDateEl.textContent = new Date().toDateString();
+  await loadSobriety();
+  await loadEvents();
   setAffirmation();
-  loadDiary(todayStr);
-
-  sobrietyForm.onsubmit=async e=>{e.preventDefault(); await fetch('/api/sobriety',{method:'POST',headers:{'Content-Type':'application/json'},body: JSON.stringify({start_date: sobrietyStart.value})}); loadSobriety();};
-  eventForm.onsubmit=async e=>{e.preventDefault(); await fetch('/api/events',{method:'POST',headers:{'Content-Type':'application/json'},body: JSON.stringify({title:title.value,category:category.value,start:start.value,end:end.value,link:link.value,recurrence:recurrence.value})}); loadEvents(); eventForm.reset();};
+  await loadDiary();
 });
 </script>
 </body>
