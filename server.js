@@ -28,17 +28,16 @@ app.get('/api/events/today', async (req, res) => {
       OR
       (
         recurrence = 'Daily'
-        AND start <= NOW()
+        AND start::date <= CURRENT_DATE
       )
       OR
       (
         recurrence = 'Weekly'
-        AND start <= NOW()
+        AND start::date <= CURRENT_DATE
         AND EXTRACT(DOW FROM start) = EXTRACT(DOW FROM CURRENT_DATE)
       )
     ORDER BY start
   `);
-
   res.json(result.rows);
 });
 
