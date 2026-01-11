@@ -33,6 +33,7 @@ button.submitBtn:hover { background: #43a047; }
 <div id="nav" style="display:flex; gap:16px; margin-bottom:24px; justify-content:center;">
   <button class="tabBtn active" onclick="showTab('today')">Today</button>
   <button class="tabBtn" onclick="showTab('schedule')">Scheduler</button>
+  <button class="tabBtn" onclick="showTab('risk')">Risk Cycle</button>
 </div>
 
 <!-- Today Tab -->
@@ -78,6 +79,81 @@ button.submitBtn:hover { background: #43a047; }
   <h2>Your Schedule</h2>
   <div id="events"></div>
 </div>
+
+<div id="riskTab" style="display:none;" class="card">
+  <h2>🧠 2–3 Week Cycle Prevention & Honesty Plan</h2>
+  <p><strong>Purpose:</strong> Interrupt my predictable 2–3 week risk cycle by prioritising early connection, low‑detail honesty, and nervous‑system regulation.</p>
+
+  <h3>1. Name the Pattern</h3>
+  <p><strong>Cycle name:</strong> The Danger Zone<br>
+  <strong>Typical timing:</strong> Around weeks 2 to 3 weeks after a stable period.</p>
+  <hr>
+
+  <h3>2. Early Warning Signs (Before Urges)</h3>
+  <p>When this phase starts, I often notice:</p>
+  <ul>
+    <li>☐ Avoiding check ins</li>
+    <li>☐ Thinking "I don’t want to burden anyone"</li>
+    <li>☐ Fantasising about relief/escape</li>
+    <li>☐ Thinking about future events where a drink "won't be allowed"</li>
+    <li>☐ Not filling in my diary at least within 24 hours of the day before</li>
+  </ul>
+  <p><strong>Rule:</strong> If I notice two or more of these, I act — no debate.</p>
+  <hr>
+  <h3>3. Time‑Based Intervention Rule - To be removed post risk period</h3>
+  <p>I do not wait until I feel bad enough.<br><br>
+  On Day <b>12 to 22</b>, I proactively check in.<br>
+  OR: Every weekend, regardless of mood.<br><br>
+  <strong>Time beats feelings.</strong></p>
+  <hr>
+  <h3>4. Who I Tell</h3>
+  <p><strong>Primary support:</strong> Natalie<br>
+  <strong>Secondary support:</strong> Carl<br><br>
+  These people get the early warning, not just the crisis.</p>
+  <hr>
+  <h3>5. Pre‑Written Prevention Disclosures (Low‑Detail)</h3>
+  <p>I choose one sentence and stop:</p>
+  <ul>
+    <li>“I’m heading into a risky period of time”</li>
+    <li>“Nothing’s wrong yet, but this is when my head gets louder.”</li>
+    <li>“I'm just letting you know that around now is when I typically will have negative thoughts that lead to a lapse”</li>
+  </ul>
+  <p>I do <b>not</b> explain, justify, or predict relapse.</p>
+  <hr>
+  <h3>6. Mandatory Regulation Step (Before Speaking)</h3>
+  <p>Before I disclose, I regulate my body:</p>
+  <ul>
+    <li>☐ 5 slow breaths (long exhale)</li>
+    <li>☐ Cold water on face</li>
+    <li>☐ Short cycle on the bike downstairs</li>
+    <li>☐ Feet on floor, name 5 things I can see</li>
+  </ul>
+  <p>This helps my nervous system feel safe enough to connect.</p>
+  <hr>
+  <h3>7. What Help Looks Like in This Window</h3>
+  <p>I am clear about what I need:</p>
+  <ul>
+    <li>☐ Listening, not fixing</li>
+    <li>☐ Brief daily check‑ins</li>
+    <li>☐ Reassurance and normal connection</li>
+    <li>☐ More structure and barriers</li>
+  </ul>
+  <hr>
+  <h3>8. If a Lapse Happens (Damage‑Limitation Plan)</h3>
+  <p>Imperfection is planned for — secrecy is not.<br><br>
+  <b>Timeframe:</b> I disclose the same day before going to bed at latest.<br>
+  <b>Format</b>: One sentence.<br>
+  <b>Boundary:</b> “I don't want to go through every detail and relive it repeatedly”</p>
+  <p>Example:</p>
+  <ul>
+    <li>“I had a slip. I’m safe now, and I wanted to say it early rather than hide.”</li>
+  </ul>
+  <hr>
+  <h3>9. Anchor Statement</h3>
+  <p>“My job isn’t to stay sober perfectly — it’s to stay connected early.”</p>
+</div>
+
+
 
 <h2>Helpful Links</h2>
 <div class="links">
@@ -172,6 +248,7 @@ async function loadEvents(todayOnly=false) {
 function showTab(tab) {
   document.getElementById('todayTab').style.display = tab === 'today' ? 'block' : 'none';
   document.getElementById('scheduleTab').style.display = tab === 'schedule' ? 'block' : 'none';
+  document.getElementById('riskTab').style.display = tab === 'risk' ? 'block' : 'none';
   document.querySelectorAll('.tabBtn').forEach(btn => btn.classList.remove('active'));
   document.querySelector(`button[onclick*='${tab}']`).classList.add('active');
 }
