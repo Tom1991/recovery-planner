@@ -14,6 +14,34 @@ const pool = new Pool({
   }
 });
 
+/* ------------------ TODAY EVENTS ------------------ */
+
+app.get('/api/events/today', async (req, res) => {
+  const result = await pool.query(`
+    SELECT *
+    FROM events
+    WHERE
+      (
+        recurrence = 'None'
+        AND start::date = CURRENT_DATE
+      )
+      OR
+      (
+        recurrence = 'Daily'
+        AND start <= NOW()
+      )
+      OR
+      (
+        recurrence = 'Weekly'
+        AND start <= NOW()
+        AND EXTRACT(DOW FROM start) = EXTRACT(DOW FROM CURRENT_DATE)
+      )
+    ORDER BY start
+  `);
+
+  res.json(result.rows);
+});
+
 /* ------------------ SOBRIETY ------------------ */
 
 app.get('/api/sobriety', async (req, res) => {
@@ -54,7 +82,7 @@ app.post('/api/events', async (req, res) => {
 app.delete('/api/events/:id', async (req, res) => {
   await pool.query(
     'DELETE FROM events WHERE id = $1',
-    [req.params.id]
+    [parseInt(req.params.id)]
   );
   res.json({ success: true });
 });

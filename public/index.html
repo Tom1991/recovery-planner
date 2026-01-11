@@ -199,7 +199,7 @@ async function loadSobriety() {
 }
 
 async function loadEvents(todayOnly=false) {
-  const res = await fetch('/api/events');
+  const res = await fetch(todayOnly ? '/api/events/today' : '/api/events');
   if (!res.ok) {
     todayEventsDiv.textContent = 'Failed to load events.';
     return;
@@ -218,15 +218,29 @@ async function loadEvents(todayOnly=false) {
     // Main schedule
     const eventEl = document.createElement('div');
     eventEl.className = `event ${e.category}`;
-    eventEl.innerHTML = `<div><strong>${e.title}</strong><br>${startDate.toLocaleString()} - ${endDate.toLocaleString()}${e.link ? `<br><a href='${e.link}' target='_blank'>Link</a>` : ''}</div>`;
+    const recurrenceLabel = e.recurrence !== 'None'
+  ? `<span style="font-size:0.85em;color:#666;">🔁 ${e.recurrence}</span><br>`
+  : '';
+
+eventEl.innerHTML = `
+  <div>
+    <strong>${e.title}</strong><br>
+    ${recurrenceLabel}
+    ${startDate.toLocaleString()} - ${endDate.toLocaleString()}
+    ${e.link ? `<br><a href='${e.link}' target='_blank'>Link</a>` : ''}
+  </div>
+`;
 
     const deleteBtn = document.createElement('button');
     deleteBtn.textContent = 'Delete';
     deleteBtn.className = 'deleteBtn';
-    deleteBtn.onclick = async () => {
-      await fetch(`/api/events/${e.id}`, { method: 'DELETE' });
-      loadEvents(true);
-    };
+deleteBtn.onclick = async () => {
+  const ok = confirm(`Delete "${e.title}"?\nThis cannot be undone.`);
+  if (!ok) return;
+
+  await fetch(`/api/events/${e.id}`, { method: 'DELETE' });
+  loadEvents(true);
+};
     eventEl.appendChild(deleteBtn);
 
     eventsDiv.appendChild(eventEl);
@@ -234,8 +248,25 @@ async function loadEvents(todayOnly=false) {
     // Today Dashboard
     if (todayOnly && startDate.toDateString() === todayStr) {
       const todayEl = document.createElement('div');
+        const recurrenceLabel = e.recurrence !== 'None'
+    ? `<span style="font-size:0.85em;color:#666;">🔁 ${e.recurrence}</span><br>`
+    : '';
       todayEl.className = `event ${e.category}`;
-      todayEl.innerHTML = `<strong>${e.title}</strong> ${startDate.toLocaleTimeString()} - ${endDate.toLocaleTimeString()}${e.link ? `<br><a href='${e.link}' target='_blank'>Link</a>` : ''}`;
+    todayEl.innerHTML = `
+  <div>
+    <strong>${e.title}</strong>
+    ${e.recurrence !== 'None'
+      ? `<span style="font-size:0.85em;color:#666;margin-left:20px;">🔁 ${e.recurrence}</span>`
+      : ''
+    }
+  </div>
+  <div style="font-size:0.9em;color:#444;margin-top:4px;">
+    ${startDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+    –
+    ${endDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+  </div>
+  ${e.link ? `<a href='${e.link}' target='_blank'>Link</a>` : ''}
+`;
       todayEventsDiv.appendChild(todayEl);
     }
   });
