@@ -11,7 +11,8 @@ button.tabBtn { padding: 8px 16px; border-radius: 6px; border: none; cursor: poi
 button.tabBtn.active { background: #4caf50; color: #fff; }
 button.tabBtn:hover { background: #ddd; }
 form { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; background: #fff; padding: 12px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
-input, select, button { padding: 8px; border-radius: 4px; border: 1px solid #ccc; }
+input, select, button, textarea { padding: 8px; border-radius: 4px; border: 1px solid #ccc; }
+textarea { width: 100%; min-height: 60px; resize: vertical; }
 button.submitBtn { background: #4caf50; color: white; cursor: pointer; border: none; transition: background 0.2s; }
 button.submitBtn:hover { background: #43a047; }
 
@@ -30,6 +31,9 @@ button.submitBtn:hover { background: #43a047; }
 .sober { font-size: 1.4em; font-weight: bold; margin-bottom: 16px; }
 .deleteBtn { background: #e53935; margin-left: 8px; padding: 4px 8px; border:none; border-radius:4px; color:white; cursor:pointer; }
 .deleteBtn:hover { background: #d32f2f; }
+
+#diaryForm label { width: 100%; margin-top: 8px; font-weight: bold; }
+#diaryForm input[type="text"], #diaryForm textarea, #diaryForm input[type="number"] { width: 100%; }
 </style>
 </head>
 <body>
@@ -40,6 +44,7 @@ button.submitBtn:hover { background: #43a047; }
   <button class="tabBtn active" onclick="showTab('today')">Today</button>
   <button class="tabBtn" onclick="showTab('schedule')">Scheduler</button>
   <button class="tabBtn" onclick="showTab('risk')">Risk Cycle</button>
+  <button class="tabBtn" onclick="showTab('diary')">Diary</button>
 </div>
 
 <!-- Today Tab -->
@@ -159,6 +164,39 @@ button.submitBtn:hover { background: #43a047; }
   <p>“My job isn’t to stay sober perfectly — it’s to stay connected early.”p>
 </div>
 
+<!-- Diary Tab -->
+<div id="diaryTab" style="display:none;">
+  <h2>📝 Today's Diary</h2>
+  <form id="diaryForm">
+    <label>Goal for the day:</label>
+    <input type="text" id="diaryGoal" placeholder="My goal for today" />
+
+    <label>3 Things I am grateful for today:</label>
+    <input type="text" id="grateful1" placeholder="1" />
+    <input type="text" id="grateful2" placeholder="2" />
+    <input type="text" id="grateful3" placeholder="3" />
+
+    <label>3 Emotions:</label>
+    <input type="text" id="emotion1" placeholder="1" />
+    <input type="text" id="emotion2" placeholder="2" />
+    <input type="text" id="emotion3" placeholder="3" />
+
+    <label>Cravings (0-10):</label>
+    <input type="number" id="cravings" min="0" max="10" />
+
+    <label>Morning:</label>
+    <textarea id="morning" placeholder="Morning notes..."></textarea>
+
+    <label>Afternoon:</label>
+    <textarea id="afternoon" placeholder="Afternoon notes..."></textarea>
+
+    <label>Evening:</label>
+    <textarea id="evening" placeholder="Evening notes..."></textarea>
+
+    <button class="submitBtn">Save Diary</button>
+  </form>
+</div>
+
 <h2>Helpful Links</h2>
 <div class="links">
   <a href="https://www.alcoholics-anonymous.org.uk/" target="_blank">Alcoholics Anonymous</a>
@@ -186,9 +224,30 @@ const todayEventsDiv=document.getElementById('todayEvents');
 const weekEventsDiv=document.getElementById('weekEvents');
 const todayAffirmationDiv=document.getElementById('todayAffirmation');
 
+// Diary Elements
+const diaryForm=document.getElementById('diaryForm');
+const diaryGoal=document.getElementById('diaryGoal');
+const grateful1=document.getElementById('grateful1');
+const grateful2=document.getElementById('grateful2');
+const grateful3=document.getElementById('grateful3');
+const emotion1=document.getElementById('emotion1');
+const emotion2=document.getElementById('emotion2');
+const emotion3=document.getElementById('emotion3');
+const cravings=document.getElementById('cravings');
+const morning=document.getElementById('morning');
+const afternoon=document.getElementById('afternoon');
+const evening=document.getElementById('evening');
+
 // Utilities
 function daysBetween(start){return Math.floor((new Date()-new Date(start))/(1000*60*60*24));}
-function showTab(tab){document.getElementById('todayTab').style.display=tab==='today'?'block':'none';document.getElementById('scheduleTab').style.display=tab==='schedule'?'block':'none';document.getElementById('riskTab').style.display=tab==='risk'?'block':'none';document.querySelectorAll('.tabBtn').forEach(btn=>btn.classList.remove('active'));document.querySelector(`button[onclick*='${tab}']`).classList.add('active');}
+function showTab(tab){
+  document.getElementById('todayTab').style.display=tab==='today'?'block':'none';
+  document.getElementById('scheduleTab').style.display=tab==='schedule'?'block':'none';
+  document.getElementById('riskTab').style.display=tab==='risk'?'block':'none';
+  document.getElementById('diaryTab').style.display=tab==='diary'?'block':'none'?false:true;
+  document.querySelectorAll('.tabBtn').forEach(btn=>btn.classList.remove('active'));
+  document.querySelector(`button[onclick*='${tab}']`).classList.add('active');
+}
 function nextOccurrence(e){const s=new Date(e.start);const today=new Date(); today.setHours(0,0,0,0); if(e.recurrence==='None') return s; if(e.recurrence==='Daily') return today<s?s:today; if(e.recurrence==='Weekly'){const dowDiff=(s.getDay()-today.getDay()+7)%7;const next=new Date(today); next.setDate(today.getDate()+dowDiff); return next<s?s:next;} return s;}
 
 // Load sobriety
@@ -237,15 +296,55 @@ async function loadEvents(){
 // Affirmation
 function setAffirmation(){const today=new Date(); const dayOfYear=Math.floor((today-new Date(today.getFullYear(),0,0))/(1000*60*60*24)); todayAffirmationDiv.textContent=affirmations[dayOfYear % affirmations.length];}
 
+// Load Diary
+async function loadDiary(){
+  const res=await fetch('/api/diary/today');
+  if(!res.ok) return;
+  const data=await res.json();
+  if(!data) return;
+  diaryGoal.value=data.goal||'';
+  grateful1.value=data.grateful1||'';
+  grateful2.value=data.grateful2||'';
+  grateful3.value=data.grateful3||'';
+  emotion1.value=data.emotion1||'';
+  emotion2.value=data.emotion2||'';
+  emotion3.value=data.emotion3||'';
+  cravings.value=data.cravings||'';
+  morning.value=data.morning||'';
+  afternoon.value=data.afternoon||'';
+  evening.value=data.evening||'';
+}
+
+// Save Diary
+async function saveDiary(){
+  const payload={
+    goal: diaryGoal.value,
+    grateful1: grateful1.value,
+    grateful2: grateful2.value,
+    grateful3: grateful3.value,
+    emotion1: emotion1.value,
+    emotion2: emotion2.value,
+    emotion3: emotion3.value,
+    cravings: cravings.value,
+    morning: morning.value,
+    afternoon: afternoon.value,
+    evening: evening.value
+  };
+  await fetch('/api/diary/today',{method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)});
+  alert('Diary saved!');
+}
+
 // On load
 window.addEventListener('DOMContentLoaded',()=>{
   todayDate.textContent=new Date().toDateString();
   loadSobriety();
   loadEvents();
   setAffirmation();
+  loadDiary();
 
   sobrietyForm.onsubmit=async e=>{e.preventDefault(); await fetch('/api/sobriety',{method:'POST',headers:{'Content-Type':'application/json'},body: JSON.stringify({start_date: sobrietyStart.value})}); loadSobriety();};
   eventForm.onsubmit=async e=>{e.preventDefault(); await fetch('/api/events',{method:'POST',headers:{'Content-Type':'application/json'},body: JSON.stringify({title:title.value,category:category.value,start:start.value,end:end.value,link:link.value,recurrence:recurrence.value})}); loadEvents(); eventForm.reset();};
+  diaryForm.onsubmit=async e=>{e.preventDefault(); await saveDiary();};
 });
 </script>
 </body>
