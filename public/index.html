@@ -99,6 +99,13 @@
   }
   .diarySaveBtn:hover { background:#43a047; }
 
+  #riskWrap {
+  background:#fff;
+  padding:16px;
+  border-radius:12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+
 </style>
 </head>
 
@@ -126,7 +133,7 @@
     <h3>Today's Events</h3>
     <div id="todayEvents">Loading...</div>
 
-    <h3>Upcoming Events This Week</h3>
+    <h3>Upcoming Events in the Next 7 Days</h3>
     <div id="weekEvents">Loading...</div>
   </div>
 </div>
@@ -166,6 +173,7 @@
 
 <!-- Risk Cycle Tab (kept as you had it) -->
 <div id="riskTab" style="display:none;" class="card">
+  <div id="riskWrap">
   <h2>🧠 2–3 Week Cycle Prevention & Honesty Plan</h2>
   <p><strong>Purpose:</strong> Interrupt my predictable 2–3 week risk cycle by prioritising early connection, low-detail honesty, and nervous-system regulation.</p>
 
@@ -238,12 +246,14 @@
   <h3>9. Anchor Statement</h3>
   <p>“My job isn’t to stay sober perfectly — it’s to stay connected early.”</p>
   <p>Connection breaks cycles. Secrecy feeds them.</p>
+  </div>
 </div>
 
 <!-- Diary Tab -->
 <div id="diaryTab" style="display:none;">
   <div id="diaryWrap">
 
+    <h2>📔 Daily Diary</h2>
     <div id="diaryNav">
       <button type="button" onclick="changeDiaryDate(-1)">← Previous Day</button>
       <div id="diaryDateDisplay" style="font-weight:700;"></div>
