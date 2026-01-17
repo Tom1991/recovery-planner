@@ -118,6 +118,7 @@
   <button class="tabBtn" onclick="showTab('risk')">Risk Cycle</button>
   <button class="tabBtn" onclick="showTab('diary')">Diary</button>
   <button class="tabBtn" onclick="showTab('schedule')">Scheduler</button>
+  <button class="tabBtn" onclick="showTab('futureTab')">Future Updates</button>
 </div>
 
 <!-- Today Tab -->
@@ -295,6 +296,27 @@
   </div>
 </div>
 
+<!-- Future Updates Tab -->
+<div id="futureTab" style="display:none;">
+  <div style="
+    background:#fff;
+    padding:16px;
+    border-radius:12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  ">
+    <h2>🚀 Future Updates & Ideas</h2>
+    <p>This page is for capturing ideas, improvements, or things I want to build later. No pressure to implement. Just collect.</p>
+
+    <h3>Feature Ideas</h3>
+    <ul>
+      <li>Migrate postgreSQL backend before free month expires - Crucial!</li>
+      <li>Make app more mobile friendly (dedicated mobile CSS). </li>
+      <li>Potential pin lock for a bit more security.</li>
+      <li>12 Steps tab tracking my work through them and where I am up to.</li>
+    </ul>
+  </div>
+</div>
+
 <h2>Helpful Links</h2>
 <div class="links">
   <a href="https://www.alcoholics-anonymous.org.uk/" target="_blank">Alcoholics Anonymous</a>
@@ -347,6 +369,7 @@ function showTab(tab){
   document.getElementById('scheduleTab').style.display = tab==='schedule' ? 'block' : 'none';
   document.getElementById('riskTab').style.display = tab==='risk' ? 'block' : 'none';
   document.getElementById('diaryTab').style.display = tab==='diary' ? 'block' : 'none';
+  document.getElementById('futureTab').style.display = tab==='futureTab' ? 'block' : 'none';
 
   document.querySelectorAll('.tabBtn').forEach(btn => btn.classList.remove('active'));
   document.querySelector(`button[onclick*="${tab}"]`).classList.add('active');
