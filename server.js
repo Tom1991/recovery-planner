@@ -107,19 +107,20 @@ app.get('/api/diary/:date', async (req, res) => {
 app.post('/api/diary', async (req, res) => {
   try {
     const {
-      date,
-      goal,
-      grateful1,
-      grateful2,
-      grateful3,
-      emotion1,
-      emotion2,
-      emotion3,
-      cravings,
-      morning,
-      afternoon,
-      evening
-    } = req.body;
+  date,
+  goal,
+  grateful1,
+  grateful2,
+  grateful3,
+  emotion1,
+  emotion2,
+  emotion3,
+  cravings,
+  morning,
+  afternoon,
+  evening,
+  checked_in
+} = req.body;
 
     await pool.query(
       `INSERT INTO diary 
@@ -137,7 +138,8 @@ app.post('/api/diary', async (req, res) => {
         cravings = EXCLUDED.cravings,
         morning = EXCLUDED.morning,
         afternoon = EXCLUDED.afternoon,
-        evening = EXCLUDED.evening`,
+        evening = EXCLUDED.evening,
+        checked_in = EXCLUDED.checked_in`,
       [date, goal, grateful1, grateful2, grateful3, emotion1, emotion2, emotion3, cravings, morning, afternoon, evening]
     );
 
@@ -147,6 +149,7 @@ app.post('/api/diary', async (req, res) => {
     res.status(500).json({ error: 'Failed to save diary entry' });
   }
 });
+
 
 /* ------------------ SERVER ------------------ */
 
