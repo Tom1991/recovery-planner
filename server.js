@@ -4,7 +4,28 @@ const { Pool } = require('pg');
 const path = require('path');
 
 const app = express();
+
+function basicAuth(req, res, next) {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader) {
+    res.setHeader('WWW-Authenticate', 'Basic realm="Recovery Planner"');
+    return res.status(401).send('Authentication required');
+  }
+
+  const base64 = authHeader.split(' ')[1];
+  const decoded = Buffer.from(base64, 'base64').toString();
+  const [username, password] = decoded.split(':');
+
+  if (password === process.env.APP_PASSWORD) {
+    return next();
+  }
+
+  return res.status(401).send('Access denied');
+}
+
 app.use(express.json());
+app.use(basicAuth);
 app.use(express.static('public'));
 
 const pool = new Pool({
@@ -124,8 +145,8 @@ app.post('/api/diary', async (req, res) => {
 
     await pool.query(
       `INSERT INTO diary 
-      ("date", goal, grateful1, grateful2, grateful3, emotion1, emotion2, emotion3, cravings, morning, afternoon, evening)
-      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)
+      ("date", goal, grateful1, grateful2, grateful3, emotion1, emotion2, emotion3, cravings, morning, afternoon, evening, checked_in)
+      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)
       ON CONFLICT ("date") 
       DO UPDATE SET
         goal = EXCLUDED.goal,
@@ -140,7 +161,7 @@ app.post('/api/diary', async (req, res) => {
         afternoon = EXCLUDED.afternoon,
         evening = EXCLUDED.evening,
         checked_in = EXCLUDED.checked_in`,
-      [date, goal, grateful1, grateful2, grateful3, emotion1, emotion2, emotion3, cravings, morning, afternoon, evening]
+      [date, goal, grateful1, grateful2, grateful3, emotion1, emotion2, emotion3, cravings, morning, afternoon, evening, checked_in]
     );
 
     res.json({ success: true });
